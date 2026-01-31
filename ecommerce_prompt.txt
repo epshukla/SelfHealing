@@ -1,0 +1,287 @@
+ROLE & GOAL
+
+You are a senior full-stack engineer building an independent demo e-commerce website that simulates merchant-side failures during a hosted → headless migration.
+
+This website is NOT part of the agentic AI system.
+
+Its only responsibilities are:
+
+Behave like a real merchant integration
+
+Break in realistic ways during migration
+
+Persist support tickets into a shared tickets database
+
+The agentic AI + dashboard will consume these tickets separately.
+
+CONTEXT (PROBLEM STATEMENT)
+
+This merchant site represents a merchant migrating to a headless e-commerce architecture, where issues commonly arise:
+
+Checkout failures due to deprecated APIs
+
+Webhook integrations silently breaking
+
+Backend instability (DB pool exhaustion)
+
+Behavior that “used to work” pre-migration
+
+When these failures occur, support tickets must be generated automatically, without human input.
+
+This mirrors how real SaaS platforms observe merchant pain.
+
+HARD ARCHITECTURAL BOUNDARIES (IMPORTANT)
+❌ This site must NOT:
+
+Contain any agent logic
+
+Contain any LLM logic
+
+Perform reasoning or root-cause analysis
+
+Trigger fixes or actions
+
+✅ This site MUST:
+
+Generate real system faults
+
+Detect those faults locally
+
+Persist tickets into a database
+
+Look like a real SaaS merchant frontend + backend
+
+TECH STACK (LOCKED)
+
+Backend: FastAPI
+
+Frontend: React
+
+Database: SQLite (persistent, shared)
+
+Styling: Must visually match the agent dashboard theme
+
+No Docker assumptions inside this prompt
+
+REQUIRED DIRECTORY STRUCTURE
+
+Create the merchant site in a separate top-level folder:
+
+merchant_ecommerce_site/
+├── backend/
+│   ├── app.py
+│   ├── checkout.py
+│   ├── webhooks.py
+│   ├── database.py
+│   ├── ticket_writer.py
+│   ├── migration_state.py
+│   ├── models.py
+│   └── config.py
+├── frontend/
+│   ├── src/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── api/
+│   │   └── styles/
+│   └── package.json
+├── shared/
+│   └── theme/
+├── data/
+│   └── tickets.db
+└── README.md
+
+DATABASE REQUIREMENTS (CRITICAL)
+SQLite database: tickets.db
+
+Must contain at least:
+
+tickets table
+id TEXT PRIMARY KEY
+merchant_id TEXT
+issue_type TEXT
+severity TEXT
+status TEXT
+source TEXT
+error_summary TEXT
+raw_error TEXT
+created_at TIMESTAMP
+
+
+This database is the only contract between merchant site and dashboard.
+
+REQUIRED FAULT SCENARIOS (REAL FAULTS)
+1️⃣ Checkout Failure — API Deprecation
+
+Cause
+
+Checkout uses deprecated payment API version
+
+Behavior
+
+/checkout endpoint fails
+
+User sees payment error
+
+Ticket automatically written to DB
+
+Ticket written
+
+issue_type = "checkout_failure"
+severity = "high"
+source = "api_deprecation"
+
+2️⃣ Webhook Failure — Third-Party Integration
+
+Cause
+
+Order webhook endpoint unreachable / misconfigured
+
+Behavior
+
+Order succeeds
+
+Webhook retries exceed threshold
+
+Ticket automatically written
+
+Ticket written
+
+issue_type = "webhook_failure"
+severity = "medium"
+source = "third_party_webhook"
+
+3️⃣ Database Failure — Connection Pool Exhaustion
+
+Cause
+
+Artificial DB connection limit exceeded
+
+Behavior
+
+Backend throws DB errors
+
+Site partially degrades
+
+Ticket automatically written
+
+Ticket written
+
+issue_type = "db_connection_failure"
+severity = "high"
+source = "infrastructure"
+
+
+📌 This must use a real SQLite connection pool limit, not a mock flag.
+
+MIGRATION SIMULATION (MANDATORY)
+
+The site must support migration states:
+
+PRE_MIGRATION
+MID_MIGRATION
+POST_MIGRATION
+
+
+Migration state must affect system behavior
+
+MID_MIGRATION increases probability of failures
+
+Migration state selectable from frontend UI
+
+FRONTEND REQUIREMENTS (IMPORTANT)
+
+The React frontend must include:
+
+Product listing
+
+Checkout flow
+
+Migration stage toggle
+
+Clear error banners
+
+Realistic SaaS look & feel
+
+Same color palette / typography as dashboard
+
+The frontend must:
+
+Trigger real backend failures
+
+NOT generate tickets itself
+
+Only display user-facing symptoms
+
+BACKEND RESPONSIBILITIES
+
+The backend must:
+
+Detect internal failures
+
+Generate tickets automatically
+
+Write tickets to SQLite
+
+Never reason about cause
+
+Never fix issues
+
+Think of it as a dumb but honest merchant system.
+
+README REQUIREMENTS
+
+README.md must explain:
+
+Purpose of the merchant site
+
+How faults are generated
+
+How tickets are written
+
+How the agent/dashboard should consume tickets
+
+BEFORE WRITING CODE — ASK ME
+
+❗ STOP and ask:
+
+Should ticket IDs be UUIDs or incremental?
+
+Should multiple merchants be simulated or just one?
+
+Should the DB be shared via file or API?
+
+Confirm port numbers to avoid conflicts
+
+DO NOT proceed until answered.
+
+SUCCESS CRITERIA
+
+At the end:
+
+I run merchant site
+
+I perform checkout / order
+
+A real failure occurs
+
+A ticket appears in tickets.db
+
+Dashboard fetches and displays it
+
+Agent reacts downstream
+
+This must feel like:
+
+“A real merchant integration breaking during migration”
+
+FINAL RULES
+
+No shortcuts
+
+No fake tickets
+
+No tight coupling
+
+No agent logic here
+
+This is signal generation only.
