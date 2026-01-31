@@ -1,0 +1,9 @@
+{
+    "scenario_name": "webhook_failure",
+    "description": "Webhook delivery failing for external integrations.",
+    "logs": [
+        "[ERROR] 2026-01-31 11:20:00 - WebhookDispatcher - Delivery failed to https://merchant-x.com/hooks/order_created",
+        "[ERROR] 2026-01-31 11:20:01 - WebhookDispatcher - Timeout after 3000ms",
+        "[INFO] 2026-01-31 11:20:02 - RetryManager - Queueing retry 1/5 for event evt_88291"
+    ]
+}
