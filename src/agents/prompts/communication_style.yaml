@@ -1,0 +1,4 @@
+# IMPORTANT: Keep system prompts separate for versioning
+description: "Style guide for agent communication."
+style:
+  tone: "professional and concise"

@@ -1,0 +1,5 @@
+# IMPORTANT: Keep system prompts separate for versioning
+description: "Logic for diagnosing system errors."
+prompts:
+  - id: "diagnose_root_cause"
+    text: "Analyze the following logs and determine the root cause..."

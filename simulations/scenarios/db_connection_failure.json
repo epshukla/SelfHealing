@@ -1,0 +1,8 @@
+{
+    "scenario_name": "database_timeout",
+    "description": "Simulates a DB connection timeout.",
+    "logs": [
+        "Error: Connection timed out",
+        "Retrying..."
+    ]
+}
